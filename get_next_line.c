@@ -16,54 +16,49 @@ char	*get_next_line(int fd)
 {
 	size_t		read_ret;
 	char		*str_buff[BUFF_SIZE + 1];
-	static char *str_stash;
-	char		*line;
+	static char 	*str_stash;
+	char		*the_line;
+	char		*n_l_ptr;
 
-	if (fd < 0 || BUFF_SIZE < 1 || str_buff == 0)
-	{
-		if (str_stash != 0)
-			free(str_stash);
-		return(1);
-	}
-	read_ret = read(fd, str_buff, BUFF_SIZE);
-	if (read_ret < 0)
-	{
-		free(str_buff);
-		if (str_stash != 0)
-			free(str_stash);
-		return (-1);//or (0)??
-	}
-	str_buff[read_ret] == '\0';
-	if (read_ret == 0)
-	{
-		free(str_buff);
-		if (str_stash != 0)
-			free(str_stash);
+	n_l_ptr = (char *)malloc(sizeof(char) * 1);
+	if (n_l_ptr == 0)
 		return (0);
-	}
-	if (read_ret > 0)
+	n_l_ptr[0] = '\0';
+	if (fd < 0 || BUFF_SIZE < 1) // || str_buff == 0)??
+		return (free_if_needed(str_stash, str_buff);
+	while (n_l_ptr[0] == '\0')
 	{
-		line = copy_buff(&str_buff, read_ret, &str_stash);
-		free(str_buff);
+		read_ret = read(fd, str_buff, BUFF_SIZE);
+		if (read_ret == -1)
+			//free(str_buff);??
+			return (free_if_needed(str_stash, str_buff);
+		str_buff[read_ret] == '\0';
+		if (read_ret > 0)
+		{
+			the_line = copy_buff(&str_buff, &str_stash, &n_l_ptr);
+			//if (the_line == 0)
+			//	the_line = save_line(the_line, str_stash, n_l_ptr);
+		}
+		if (read_ret == 0)//EOF
+			return (save_line(the_line, str_stash, n_l_ptr));
 	}
-	return(line);
+	return(the_line);
 }
 
-char *copy_buff(char *str_buff, size_t read_ret, char *str_stash)
+char *copy_buff(char *str_buff, char *str_stash, char *n_l_ptr)
 {
-	int		new_line;
-	char	*n_l_ptr;
+	int	new_line;
 	char	*line;
 
-	new_line = 10;
+	new_line = '\n';
 	if(str_stash == 0)
 	{
-		str_stash = ft_strdup(str_buff);
-		if (str_stash == 0)
-			return (0);
+		str_stash = strdup_free(str_buff);
+		//if (str_stash == 0)
+			//return (0);
 	}
 	else 
-		str_stash = ft_strjoin(str_stash, str_buff);
+		strjoin_free(str_stash, str_buff);
 	n_l_ptr = ft_strchr(str_stash, new_line);
 	if (n_l_ptr == 0)
 		return (str_stash);
@@ -85,3 +80,13 @@ void	save_line(line, str_stash, n_l_ptr)
 	line[i + 1] = '\0';
 	
 }
+				 
+void	free_if_needed(char *str_stash, char *str_buff)
+{
+	if (str_stash != 0)
+		free(str_stash);
+	if (str_buff != 0)
+		free(str_buff);
+	return (0);
+}
+	
