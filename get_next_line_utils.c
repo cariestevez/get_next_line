@@ -6,13 +6,13 @@
 /*   By: cestevez <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/02 16:38:11 by cestevez          #+#    #+#             */
-/*   Updated: 2023/02/02 20:17:27 by cestevez         ###   ########.fr       */
+/*   Updated: 2023/02/06 22:02:09 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-size_t	ft_strlen(const char *s)
+size_t	ft_strlen(char *s)
 {
 	size_t	i;
 
@@ -22,7 +22,7 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
-char	*ft_strdup(const char *s)
+char	*strdup_free(char *s)
 {
 	size_t	length;
 	char	*ptr;
@@ -38,37 +38,51 @@ char	*ft_strdup(const char *s)
 			length++;
 		}
 		ptr[length] = '\0';
+		free(s);
 		return (ptr);
 	}
 	return (0);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*strjoin_free(char *stash, char *buff)
 {
-	char	*joint_str;
+	size_t	len;
 	size_t	i;
+	size_t	j;
+	char	*temp;
 
-	i = ft_strlen(s1) + ft_strlen(s2);
-	joint_str = (char *)malloc(i + 1);
-	if (!joint_str)
+	len = ft_strlen(stash) + ft_strlen(buff);
+	i = ft_strlen(stash);
+	j = 0;
+	temp = strdup_free(stash);
+	stash = (char *)malloc(len + 1);
+	if (!stash)
 		return (0);
-	ft_strlcpy(joint_str, s1, i + 1);
-	ft_strlcat(joint_str, s2, i + 1);
-	return (joint_str);
+	stash = strdup_free(temp);
+	while (len > i && buff[j] != '\0')
+	{
+		stash[i] = buff[j];
+		i++;
+		j++;
+	}
+	stash[i] = '\0';
+	free(buff);
+	free(temp);
+	return (stash);
 }
 
-char	*ft_strchr(const char *s, int c)
+int	strchr_newline(char *s, int new_line_c)
 {
 	int	i;
 
 	i = 0;
 	while (s[i] != '\0')
 	{
-		if (s[i] == (char)c)
-			return ((char *)&s[i]);
+		if (s[i] == (char)new_line_c)
+			return (1);
 		i++;
 	}
-	if (s[i] == (char)c)
-		return ((char *)&s[i]);
+	if (s[i] == (char)new_line_c)
+		return (1);
 	return (0);
 }

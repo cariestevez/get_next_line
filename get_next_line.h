@@ -6,7 +6,7 @@
 /*   By: cestevez <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/01 19:56:01 by cestevez          #+#    #+#             */
-/*   Updated: 2023/02/02 20:17:31 by cestevez         ###   ########.fr       */
+/*   Updated: 2023/02/06 21:31:52 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,10 +23,13 @@
 # include <stdio.h>
 
 char	*get_next_line(int fd);
-size_t	ft_strlen(const char *s);
-char    *copy_buff(char *str_buff, size_t read_ret, char *str_stash);
-char	*ft_strdup(const char *s);
-char	*ft_strjoin(char const *s1, char const *s2);
-char	*ft_strchr(const char *s, int c);
+size_t	ft_strlen(char *s);
+int     cpy_srch_buff(char *str_buff, char *str_stash);
+char	*strdup_free(char *s);
+char	*strjoin_free(char *s1, char *s2);
+char	*strlcat_line(char *str, char *dst, char *src, size_t size);
+int	    strchr_newline(char *s, int c);
+char	*complete_line(char *str_stash);
+void	clean_stash(char *str_stash);
 
 #endif
