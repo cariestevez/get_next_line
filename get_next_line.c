@@ -6,7 +6,7 @@
 /*   By: cestevez <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/23 14:17:06 by cestevez          #+#    #+#             */
-/*   Updated: 2023/02/06 21:44:01 by cestevez         ###   ########.fr       */
+/*   Updated: 2023/02/09 23:48:32 by cestevez         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,12 @@ char	*get_next_line(int fd)
 	}
 	str_buff = (char *)malloc(sizeof(char) * BUFF_SIZE + 1);
 	is_new_line = 0;
+	printf("before reading\n");
 	while (is_new_line == 0)
 	{
 		read_ret = read(fd, str_buff, BUFF_SIZE);
+		printf("Read return is: %ld\n", read_ret);
+		printf("Buffer after reading is: %s\n", str_buff);
 		if (read_ret == -1)
 		{
 			if (str_stash != 0)
@@ -40,29 +43,37 @@ char	*get_next_line(int fd)
 		}
 		if (read_ret == 0)//EOF
 		{
-			if (str_buff != 0)
-				free(str_buff);
-			return(complete_line(str_stash));
+			if (str_stash != 0)
+				return(complete_line(str_stash));
+			return (0);
 		}
 		if (read_ret > 0)
 		{
 			str_buff[read_ret] = '\0';
-			is_new_line = cpy_srch_buff(str_buff, str_stash);
+			printf("Null terminated buffer: %s\n", str_buff);
+			is_new_line = cpy_srch_buff(str_buff, &str_stash);
+			printf("yes, stash is: %s\n", str_stash);
+			printf("yes, buffer is: %s\n", str_buff);
+			printf("and new line or not?: %d\n", is_new_line);
 		}
 	}
 	return(complete_line(str_stash));
 }
 
-int	cpy_srch_buff(char *str_buff, char *str_stash)
+int	cpy_srch_buff(char *str_buff, char **str_stash)
 {
 	int	n_l;
 	
 	n_l = 0;
-	if(str_stash == 0)
-		str_stash = strdup_free(str_buff);
+	if(*str_stash == 0)
+	{
+		*str_stash = strdup_free(str_buff);
+		printf("Stash(before empty) after copying buff : %s\n", *str_stash);
+		printf("Buffer after freeing: %s\n", str_buff);
+	}
 	else 
-		str_stash = strjoin_free(str_stash, str_buff);
-	n_l = strchr_newline(str_stash, '\n');
+		*str_stash = strjoin_free(str_stash, str_buff);
+	n_l = strchr_newline(*str_stash, '\n');
 	if (n_l == 0)
 		return (0);
 	return(1);
@@ -91,19 +102,19 @@ char	*complete_line(char *str_stash)
 	}
 	else
 		final_line[i] = '\0';
-	clean_stash(str_stash);
+	free(str_stash);
 	return(final_line);	
 }
 		
-void	clean_stash(char *str_stash)
+/*void	clean_stash(char **str_stash)
 {
 	char	*temp;
 	size_t	length_stash;
 	size_t	i;
 	
-	length_stash = ft_strlen(str_stash);
+	length_stash = ft_strlen(*str_stash);
 	i = 0;
-	while (str_stash[i] != '\n' && str_stash[i] != 0)
+	while (*str_stash[i] != '\n' && *str_stash[i] != 0)
 		i++;
 	temp = (char *)malloc(sizeof(char) * length_stash - i);
 	while (str_stash[i] != 0)
@@ -111,10 +122,11 @@ void	clean_stash(char *str_stash)
 		temp [i - length_stash] = str_stash[i + 1];
 		i++;
 	}
-	free(str_stash);
+	//free(str_stash);
 	str_stash = temp;
-	free(temp);
-}
+//	free(temp);
+
+}*/
 				
 /*void	free_if_needed(char *str_stash, char *str_buff)
 {
