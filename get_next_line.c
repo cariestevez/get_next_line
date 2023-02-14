@@ -17,7 +17,8 @@ char	*get_next_line(int fd)
 	char		*str_buff;
 	static char *str_stash;
 	ssize_t		read_ret;
-	int			is_new_line;
+	char		*is_new_line;
+	char		*line;
 
 	if (fd < 0 || BUFF_SIZE < 1)
 	{
@@ -31,7 +32,7 @@ char	*get_next_line(int fd)
 	while (is_new_line == 0)
 	{
 		read_ret = read(fd, str_buff, BUFF_SIZE);
-		printf("Read return is: %ld\n", read_ret);
+		printf("--------> Read return is: %ld\n", read_ret);
 		printf("Buffer after reading is: %s\n", str_buff);
 		if (read_ret == -1)
 		{
@@ -43,66 +44,83 @@ char	*get_next_line(int fd)
 		}
 		if (read_ret == 0)//EOF
 		{
-			if (str_stash != 0)
-				return(complete_line(str_stash));
-			return (0);
+			printf("Stash at EOF: %s\n", str_stash);
+			line = complete_line(&str_stash, is_new_line);
+			if (is_new_line != 0)
+				free(is_new_line);
+			free(str_buff);
+			free(str_stash);
+			return (line);
 		}
 		if (read_ret > 0)
 		{
 			str_buff[read_ret] = '\0';
 			printf("Null terminated buffer: %s\n", str_buff);
 			is_new_line = cpy_srch_buff(str_buff, &str_stash);
-			printf("yes, stash is: %s\n", str_stash);
-			printf("yes, buffer is: %s\n", str_buff);
-			printf("and new line or not?: %d\n", is_new_line);
+			printf("is new line: %s\n", is_new_line);
 		}
 	}
-	return(complete_line(str_stash));
+	line = complete_line(&str_stash, is_new_line);
+	str_stash = *(&is_new_line) + 1;
+	printf("Stash before return: %s\n", str_stash);
+	free(str_buff);
+	return(line);
 }
 
-int	cpy_srch_buff(char *str_buff, char **str_stash)
+char	*cpy_srch_buff(char *str_buff, char **str_stash)
 {
-	int	n_l;
+	char	*n_l_ptr;
 	
-	n_l = 0;
 	if(*str_stash == 0)
 	{
-		*str_stash = strdup_free(str_buff);
-		printf("Stash(before empty) after copying buff : %s\n", *str_stash);
-		printf("Buffer after freeing: %s\n", str_buff);
+		*str_stash = ft_strdup(str_buff);
+		printf("Stash(empty before) after copying buff : %s\n", *str_stash);
 	}
-	else 
-		*str_stash = strjoin_free(str_stash, str_buff);
-	n_l = strchr_newline(*str_stash, '\n');
-	if (n_l == 0)
+	else
+	{ 
+		*str_stash = my_strjoin(str_stash, str_buff);
+		printf("Stash(not empty bef) after strjoin : %s\n", *str_stash);
+	}
+	n_l_ptr = strchr_newline(*str_stash, '\n');
+	printf("n_l_ptr: %s\n", n_l_ptr);
+	if (n_l_ptr == 0)
 		return (0);
-	return(1);
+	return(n_l_ptr);
 }
 
-char	*complete_line(char *str_stash)
+char	*complete_line(char **str_stash, char *new_line)
 {
 	char	*final_line;
 	size_t	i;
+	size_t	j;
 
-	if(str_stash == 0)
+	if(*str_stash == 0)
 		return (0);
-	final_line = (char *)malloc(sizeof(char) * ft_strlen(str_stash) + 1);
+	final_line = (char *)malloc(sizeof(char) * (100));
 	if (final_line == 0)
 		return (0);
+	if (new_line == 0)
+	{
+		final_line = *str_stash;
+		return (final_line);
+	}
 	i = 0;
-	while (str_stash[i] != '\n' && str_stash != 0)
+	j = 0;
+	printf("final line ptr %p\n", final_line);
+	printf("final line empty %s\n", final_line);
+	printf("stash passed to complete line: %s\n", *str_stash);
+	printf("new line char: %c\n", *new_line);
+	while (*str_stash[i] != *new_line)
 	{
-		final_line[i] = str_stash[i];
-		i++;
+		final_line[j] = *str_stash[i];
+		str_stash[i] += 1;
+		j++;
 	}
-	if (str_stash[i] == '\n')
-	{
-		final_line[i] = str_stash[i];
-		final_line[i + 1] = '\0';
-	}
-	else
-		final_line[i] = '\0';
-	free(str_stash);
+	printf("final line withou newline %s\n", final_line);
+	final_line[j] = *str_stash[i];
+	printf("final line %s\n", final_line);
+	final_line[j + 1] = '\0';
+//	str_stash = (&new_line) + 1;
 	return(final_line);	
 }
 		
