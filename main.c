@@ -5,8 +5,11 @@ int	main()
 {
 	int	my_file;
 	int	errno;
+	char	*the_line;
+	int	i;
 /*	char    line_buff[200];*/
 
+	i = 1;
 	errno = 0;
 	my_file = open("test.txt", O_RDONLY);
 	if (my_file == 0)
@@ -14,9 +17,15 @@ int	main()
 		printf("Unable to open the file");
 		return (-1);
 	}
-	while (get_next_line(my_file) != 0)
-		printf("%s", get_next_line(my_file));
-//  free()??
+	the_line = get_next_line(my_file);
+	while (the_line != 0)
+	{
+		printf(" ...line %d: %s", i, the_line);
+		free(the_line);
+		i++;
+		the_line = get_next_line(my_file);
+	}
+	free(the_line);
 	errno = close(my_file);
 /*	while (fgets(line_buff, sizeof(line_buff), my_file))
 		printf("%s", line_buff);*/
