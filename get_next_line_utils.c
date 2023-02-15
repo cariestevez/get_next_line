@@ -52,16 +52,13 @@ char	*my_strjoin(char **stash, char *buff)
 	size_t	j;
 	char	*temp;
 
-	len = ft_strlen(*stash) + ft_strlen(buff);
 	i = ft_strlen(*stash);
+	len = i + ft_strlen(buff);
 	j = 0;
 	temp = (char *)malloc(len + 1);
-	if (!temp)
+	if (temp == 0)
 		return (0);
-	printf("stash passed to strjoin: %s\n", *stash);
 	temp = ft_strdup(*stash);
-	printf("copy of the stash in temp %s\n", temp);
-	printf("buffer passed to strjoin: %s\n", buff);
 	while (buff[j] != '\0')
 	{
 		temp[i] = buff[j];
@@ -69,9 +66,6 @@ char	*my_strjoin(char **stash, char *buff)
 		j++;
 	}
 	temp[i] = '\0';
-	printf("joined, null terminated temp %s\n", temp);
-	//free(&stash);
-	//free(buff);
 	return (temp);
 }
 
@@ -79,7 +73,7 @@ char	*strchr_newline(char *stash, int new_line_c)
 {
 	size_t	i;
 	size_t	len;
-	char	*n_l;
+	char	*n_l_ptr;
 
 	i = 0;
 	len = ft_strlen(stash);
@@ -87,11 +81,11 @@ char	*strchr_newline(char *stash, int new_line_c)
 	{
 		if (stash[i] == (char)new_line_c)
 		{
-			n_l = (char *)malloc(sizeof(char) * (len - i + 1));
-			if (n_l == 0)
+			n_l_ptr = (char *)malloc(sizeof(char) * (len - i + 1));
+			if (n_l_ptr == 0)
 				return (0);
-			n_l = &stash[i];
-			return(n_l);
+			n_l_ptr = &stash[i];
+			return(n_l_ptr);
 		}
 		i++;
 	}

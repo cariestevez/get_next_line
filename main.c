@@ -20,12 +20,12 @@ int	main()
 	the_line = get_next_line(my_file);
 	while (the_line != 0)
 	{
-		printf(" ...line %d: %s", i, the_line);
-		free(the_line);
+		printf(" ...line %d: %s...............................................\n", i, the_line);
+	//	free(the_line);
 		i++;
 		the_line = get_next_line(my_file);
 	}
-	free(the_line);
+	//free(the_line);
 	errno = close(my_file);
 /*	while (fgets(line_buff, sizeof(line_buff), my_file))
 		printf("%s", line_buff);*/

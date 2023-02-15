@@ -23,13 +23,11 @@
 # include <stdio.h>
 
 char	*get_next_line(int fd);
-size_t	ft_strlen(char *s);
 char    *cpy_srch_buff(char *str_buff, char **str_stash);
+char	*complete_line(char **str_stash, char *new_line);
+size_t	ft_strlen(char *s);
 char	*ft_strdup(char *s);
 char	*my_strjoin(char **stash, char *buff);
-char	*strlcat_line(char *str, char *dst, char *src, size_t size);
 char	*strchr_newline(char *s, int new_line_c);
-char	*complete_line(char **str_stash, char *new_line);
-//void	clean_stash(char *str_stash);
 
 #endif
