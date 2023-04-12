@@ -1,17 +1,20 @@
 # include "get_next_line.h"
 #include <fcntl.h> 
 
-int	main()
+
+
+int	main() //(int ac, char **av)
 {
 	int	my_file;
 	int	errno;
 	char	*the_line;
 	int	i;
-/*	char    line_buff[200];*/
 
 	i = 1;
 	errno = 0;
-	my_file = open("test.txt", O_RDONLY);
+	//ac = 2;
+	//(void)av;
+	my_file = open("test.txt", O_RDONLY); //42;
 	if (my_file == 0)
 	{
 		printf("Unable to open the file");
@@ -20,28 +23,15 @@ int	main()
 	the_line = get_next_line(my_file);
 	while (the_line != 0)
 	{
-		printf(" ...line %d: %s...............................................\n", i, the_line);
-	//	free(the_line);
+		printf(" ...line %d: %s.................................\n", i, the_line);
+		free(the_line);
 		i++;
 		the_line = get_next_line(my_file);
 	}
 	//free(the_line);
 	errno = close(my_file);
-/*	while (fgets(line_buff, sizeof(line_buff), my_file))
-		printf("%s", line_buff);*/
 	return (errno);
 }
-
-// cc -Wall -Wextra -Werror -D BUFFER_SIZE=42 <files>.c
-//BUFFER_SIZE=9999
-//BUFFER_SIZE=1
-////BUFFER_SIZE=10000000
-/*We must be able to compile this project with and without the -D
-BUFFER_SIZE flag in addition to the usual flags. You can choose the
-default value of your choice.*/
-/*We also consider that get_next_line() has an undefined behavior when reading
-a binary file. However, you can implement a logical way to handle this behavior if
-you want to????*/
 
 
 /*#define MAX_LINE_LENGTH 80
@@ -79,4 +69,30 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 		perror(path);
 	}
+}*/
+
+/*int		main(int argc, char *argv[])
+{
+	char	fd[];
+	char	*file_name;
+	char	*line;
+	int	ret;
+
+	i = 0;
+	while (i < argc)
+	{
+		fd[i] = open(argv[i], O_RDONLY);
+		if (argc > i)
+		{
+			file_name = NULL;
+			file_name = argv[i];
+			while ((ret = get_next_line(fd[i], &line)))
+			{
+				printf("%s\n", line);
+			}
+			close(fd[i]);
+		}
+		i++
+	}
+	return (0);
 }*/
