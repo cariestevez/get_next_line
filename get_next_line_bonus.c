@@ -10,19 +10,19 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*get_next_line(int fd)
 {
 	int			read_ret;
 	char		*buff;
-	static char	*stash;
+	static char	*stash[1024];
 	char		*new_line_ptr;
 
 	read_ret = 0;
 	if (fd < 0 || BUFFER_SIZE < 1)
 		return (NULL);
-	new_line_ptr = strchr_newline(stash, '\n');
+	new_line_ptr = strchr_newline(stash[fd], '\n');
 	while (new_line_ptr == 0)
 	{
 		buff = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
@@ -30,13 +30,13 @@ char	*get_next_line(int fd)
 			return (NULL);
 		read_ret = read(fd, buff, BUFFER_SIZE);
 		if (read_ret < 0)
-			return (stash = free_stash(stash, buff));
+			return (stash[fd] = free_stash(stash[fd], buff));
 		if (read_ret == 0)
-			return (buff = free_buff(&stash, &buff));
+			return (buff = free_buff(&stash[fd], &buff));
 		buff[read_ret] = '\0';
-		new_line_ptr = save_buff_srch(&buff, &stash);
+		new_line_ptr = save_buff_srch(&buff, &stash[fd]);
 	}
-	return (complete_line(&stash, new_line_ptr));
+	return (complete_line(&stash[fd], new_line_ptr));
 }
 
 char	*save_buff_srch(char **buff, char **stash)
